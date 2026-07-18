@@ -1,0 +1,76 @@
+
+------ Query 1 — Which shipping modes drive the most delays?
+-- SELECT 
+--     "Shipping Mode",
+--     COUNT(*)                                        AS total_orders,
+--     SUM(CASE WHEN "Delivery Status" = 'Late delivery' 
+--         THEN 1 ELSE 0 END)                          AS late_orders,
+--     ROUND(100.0 * SUM(CASE WHEN "Delivery Status" = 'Late delivery' 
+--         THEN 1 ELSE 0 END) / COUNT(*), 2)           AS late_pct,
+--     ROUND(AVG("Shipping Delay (days)"), 2)          AS avg_delay_days,
+--     ROUND(AVG("Sales")::numeric, 2)                 AS avg_order_value
+-- FROM supply_chain
+-- GROUP BY "Shipping Mode"
+-- ORDER BY late_pct DESC;
+
+
+----- Query 2 — On-time delivery rate by Market and Region
+-- SELECT 
+--     "Market",
+--     "Order Region",
+--     COUNT(*)                                        AS total_orders,
+--     SUM(CASE WHEN "Delivery Status" = 'Shipping on time' 
+--         THEN 1 ELSE 0 END)                          AS ontime_orders,
+--     ROUND(100.0 * SUM(CASE WHEN "Delivery Status" = 'Shipping on time' 
+--         THEN 1 ELSE 0 END) / COUNT(*), 2)           AS ontime_pct,
+--     ROUND(100.0 * SUM(CASE WHEN "Delivery Status" = 'Late delivery' 
+--         THEN 1 ELSE 0 END) / COUNT(*), 2)           AS late_pct
+-- FROM supply_chain
+-- GROUP BY "Market", "Order Region"
+-- ORDER BY late_pct DESC
+-- LIMIT 15;
+
+----- Query 3 — Best and worst profit margins by product category
+-- SELECT 
+--     "Category Name",
+--     COUNT(*)                                        AS total_orders,
+--     ROUND(SUM("Sales")::NUMERIC, 2)                          AS total_revenue,
+--     ROUND(SUM("Order Profit Per Order")::NUMERIC, 2)         AS total_profit,
+--     ROUND(AVG("Order Item Profit Ratio")::NUMERIC * 100, 2)  AS avg_profit_ratio_pct,
+--     ROUND((SUM("Order Profit Per Order") / 
+--           NULLIF(SUM("Sales"), 0) * 100)::NUMERIC, 2)         AS overall_margin_pct
+-- FROM supply_chain
+-- GROUP BY "Category Name"
+-- ORDER BY overall_margin_pct DESC;
+
+---- Query 4 — Cost leakage by Department and Customer Segment
+-- SELECT 
+--     "Department Name",
+--     "Customer Segment",
+--     COUNT(*)                                        AS total_orders,
+--     ROUND(SUM("Sales")::NUMERIC, 2)                          AS total_sales,
+--     ROUND(SUM("Order Profit Per Order")::NUMERIC, 2)         AS total_profit,
+--     ROUND(SUM("Order Item Discount")::NUMERIC, 2)            AS total_discount,
+--     ROUND(AVG("Order Item Discount Rate")::NUMERIC * 100, 2) AS avg_discount_pct,
+--     ROUND((SUM("Order Profit Per Order") / 
+--           NULLIF(SUM("Sales"), 0) * 100)::NUMERIC, 2)         AS margin_pct
+-- FROM supply_chain
+-- GROUP BY "Department Name", "Customer Segment"
+-- ORDER BY total_discount DESC
+-- LIMIT 15;
+
+---- Query 5 — Seasonal patterns in delays and revenue
+-- SELECT 
+--     "Order Year",
+--     "Order Month",
+--     COUNT(*)                                        AS total_orders,
+--     ROUND(SUM("Sales")::NUMERIC, 2)                          AS monthly_revenue,
+--     ROUND(SUM("Order Profit Per Order")::NUMERIC, 2)         AS monthly_profit,
+--     ROUND(AVG("Shipping Delay (days)"), 2)          AS avg_delay,
+--     SUM(CASE WHEN "Delivery Status" = 'Late delivery' 
+--         THEN 1 ELSE 0 END)                          AS late_orders,
+--     ROUND(100.0 * SUM(CASE WHEN "Delivery Status" = 'Late delivery' 
+--         THEN 1 ELSE 0 END) / COUNT(*), 2)           AS late_pct
+-- FROM supply_chain
+-- GROUP BY "Order Year", "Order Month"
+-- ORDER BY "Order Year", "Order Month";
